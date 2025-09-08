@@ -16,6 +16,6 @@ class ApprovalFlowStep
             'permission' => $this->permission,
             'next' => $this->next,
             'metadata' => $this->metadata,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 }

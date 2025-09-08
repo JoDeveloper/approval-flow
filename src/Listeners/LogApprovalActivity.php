@@ -9,7 +9,7 @@ class LogApprovalActivity
 {
     public function handle(ModelApproved|ModelRejected $event): void
     {
-        if (!config('approval-flow.log_approvals', true)) {
+        if (! config('approval-flow.log_approvals', true)) {
             return;
         }
 

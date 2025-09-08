@@ -11,7 +11,7 @@ class ApprovalFlowManager
      */
     public function getApprovalStats($model): array
     {
-        if (!method_exists($model, 'approvalHistory')) {
+        if (! method_exists($model, 'approvalHistory')) {
             throw ApprovalFlowException::missingStatusEnum(get_class($model));
         }
 

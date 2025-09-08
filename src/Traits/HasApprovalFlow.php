@@ -2,10 +2,10 @@
 
 namespace Jodeveloper\ApprovalFlow\Traits;
 
+use Jodeveloper\ApprovalFlow\DataTransferObjects\ApprovalFlowStep;
 use Jodeveloper\ApprovalFlow\Events\ModelApproved;
 use Jodeveloper\ApprovalFlow\Events\ModelRejected;
 use Jodeveloper\ApprovalFlow\Exceptions\ApprovalFlowException;
-use Jodeveloper\ApprovalFlow\DataTransferObjects\ApprovalFlowStep;
 
 trait HasApprovalFlow
 {
@@ -49,7 +49,7 @@ trait HasApprovalFlow
      */
     public function approve(?string $comment = null): bool
     {
-        if (!$this->canApprove()) {
+        if (! $this->canApprove()) {
             throw ApprovalFlowException::unauthorizedAction('approve', static::class);
         }
 
@@ -78,7 +78,7 @@ trait HasApprovalFlow
      */
     public function reject(?string $note = null): bool
     {
-        if (!$this->canReject()) {
+        if (! $this->canReject()) {
             throw ApprovalFlowException::unauthorizedAction('reject', static::class);
         }
 
@@ -168,6 +168,7 @@ trait HasApprovalFlow
     public function isCompleted(): bool
     {
         $statusEnum = static::getStatusEnum();
+
         return $this->status->code === $statusEnum::getCompletedStatus();
     }
 
@@ -192,6 +193,7 @@ trait HasApprovalFlow
     public static function getStatusId($status): int
     {
         $code = is_string($status) ? $status : $status->name;
+
         return static::statuses($code)->id;
     }
 
