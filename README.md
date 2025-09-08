@@ -1,74 +1,470 @@
-# :package_description
+# Nakhlah Approval Flow
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/jodeveloper/nakhlah-approval-flow.svg?style=flat-square)](https://packagist.org/packages/jodeveloper/nakhlah-approval-flow)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jodeveloper/nakhlah-approval-flow/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jodeveloper/nakhlah-approval-flow/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jodeveloper/nakhlah-approval-flow/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/jodeveloper/nakhlah-approval-flow/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/jodeveloper/nakhlah-approval-flow.svg?style=flat-square)](https://packagist.org/packages/jodeveloper/nakhlah-approval-flow)
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+A powerful Laravel package for managing approval workflows using PHP 8.1+ enums and traits. Create complex approval processes with ease!
 
-## Support us
+## Features
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- ✅ **Type-safe approval flows** using PHP 8.1 enums
+- ✅ **Reusable trait** for any Eloquent model
+- ✅ **Permission-based approvals** with Laravel's authorization system
+- ✅ **Event-driven architecture** for notifications and logging
+- ✅ **Automatic activity logging** with user tracking
+- ✅ **Bulk approval operations**
+- ✅ **Artisan command** to generate approval flow enums
+- ✅ **Comprehensive testing** with Pest
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require jodeveloper/nakhlah-approval-flow
 ```
 
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
+php artisan vendor:publish --tag="nakhlah-approval-flow-migrations"
 php artisan migrate
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-config"
+php artisan vendor:publish --tag="nakhlah-approval-flow-config"
 ```
 
-This is the contents of the published config file:
+## Quick Start
+
+### 1. Create an Approval Flow Enum
+
+Generate a new approval flow enum:
+
+```bash
+php artisan make:approval-flow Document
+```
+
+This creates `app/Enums/DocumentStatuses.php`:
 
 ```php
-return [
+<?php
+
+namespace App\Enums;
+
+use jodeveloper\ApprovalFlow\Contracts\ApprovalStatusInterface;
+use jodeveloper\ApprovalFlow\DataTransferObjects\ApprovalFlowStep;
+
+enum DocumentStatuses: string implements ApprovalStatusInterface
+{
+    case DRAFT = 'DRAFT';
+    case MANAGER_REVIEW = 'MANAGER_REVIEW';
+    case DIRECTOR_REVIEW = 'DIRECTOR_REVIEW';
+    case APPROVED = 'APPROVED';
+    case REJECTED = 'REJECTED';
+
+    public static function getApprovalFlow(): array
+    {
+        return [
+            self::DRAFT->value => new ApprovalFlowStep(
+                permission: 'documents.manager-approve',
+                next: self::MANAGER_REVIEW->value,
+            ),
+            self::MANAGER_REVIEW->value => new ApprovalFlowStep(
+                permission: 'documents.manager-approve',
+                next: self::DIRECTOR_REVIEW->value,
+            ),
+            self::DIRECTOR_REVIEW->value => new ApprovalFlowStep(
+                permission: 'documents.director-approve',
+                next: self::APPROVED->value,
+            ),
+        ];
+    }
+
+    public static function getRejectionStatuses(): array
+    {
+        return [
+            self::MANAGER_REVIEW->value => self::REJECTED->value,
+            self::DIRECTOR_REVIEW->value => self::REJECTED->value,
+        ];
+    }
+
+    public static function getCompletedStatus(): string
+    {
+        return self::APPROVED->value;
+    }
+
+    public static function getStatusTransitions(): array
+    {
+        return [];
+    }
+}
+```
+
+### 2. Add the Trait to Your Model
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use jodeveloper\ApprovalFlow\Traits\HasApprovalFlow;
+
+class Document extends Model
+{
+    use HasApprovalFlow;
+
+    protected $fillable = [
+        'title',
+        'content',
+        'status_id',
+        'approval_comment',
+        'rejection_note',
+    ];
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public static function getStatusEnum(): string
+    {
+        return DocumentStatuses::class;
+    }
+
+    public static function statuses(string $code)
+    {
+        return Status::where('code', $code)->first();
+    }
+}
+```
+
+### 3. Use in Controllers
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Document;
+use Illuminate\Http\Request;
+
+class DocumentApprovalController extends Controller
+{
+    public function approve(Request $request, Document $document)
+    {
+        if (!$document->canApprove()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($document->approve($request->comment)) {
+            return response()->json([
+                'message' => 'Document approved successfully',
+                'status' => $document->fresh()->status->name
+            ]);
+        }
+
+        return response()->json(['error' => 'Could not approve document'], 400);
+    }
+
+    public function reject(Request $request, Document $document)
+    {
+        $request->validate(['note' => 'required|string|max:1000']);
+
+        if (!$document->canReject()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($document->reject($request->note)) {
+            return response()->json(['message' => 'Document rejected']);
+        }
+
+        return response()->json(['error' => 'Could not reject document'], 400);
+    }
+}
+```
+
+## Usage Examples
+
+### Basic Approval Operations
+
+```php
+$document = Document::find(1);
+
+// Check permissions
+if ($document->canApprove()) {
+    $document->approve('Looks good!');
+}
+
+if ($document->canReject()) {
+    $document->reject('Please revise section 3');
+}
+
+// Check status
+if ($document->isCompleted()) {
+    // Document is fully approved
+}
+
+if ($document->isInApprovalProcess()) {
+    $step = $document->getCurrentApprovalStep();
+    echo "Waiting for: " . $step->role;
+}
+```
+
+### Bulk Operations
+
+```php
+use jodeveloper\ApprovalFlow\ApprovalFlowManager;
+
+$manager = app(ApprovalFlowManager::class);
+
+// Bulk approve multiple documents
+$documents = Document::where('status_id', $pendingStatusId)->get();
+$results = $manager->bulkApprove($documents, 'Batch approval');
+
+// Results contain success and failed arrays
+echo "Approved: " . count($results['success']);
+echo "Failed: " . count($results['failed']);
+```
+
+### Approval Statistics
+
+```php
+$manager = app(ApprovalFlowManager::class);
+$stats = $manager->getApprovalStats($document);
+
+/*
+Array output:
+[
+    'total_approvals' => 2,
+    'total_rejections' => 1,
+    'current_status' => 'MANAGER_REVIEW',
+    'is_completed' => false,
+    'can_approve' => true,
+    'can_reject' => true,
+    'next_step' => 'Manager'
+]
+*/
+```
+
+### Event Handling
+
+The package fires events that you can listen to:
+
+```php
+// In your EventServiceProvider
+use jodeveloper\ApprovalFlow\Events\ModelApproved;
+use jodeveloper\ApprovalFlow\Events\ModelRejected;
+
+protected $listen = [
+    ModelApproved::class => [
+        SendApprovalNotification::class,
+    ],
+    ModelRejected::class => [
+        SendRejectionNotification::class,
+    ],
 ];
 ```
 
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
-
-## Usage
+Create listeners:
 
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+<?php
+
+namespace App\Listeners;
+
+use jodeveloper\ApprovalFlow\Events\ModelApproved;
+use Illuminate\Support\Facades\Mail;
+
+class SendApprovalNotification
+{
+    public function handle(ModelApproved $event): void
+    {
+        // Send notification to next approver or completion notification
+        $model = $event->model;
+        $nextStep = $model->getCurrentApprovalStep();
+        
+        if ($nextStep) {
+            // Notify next approver
+            Mail::to($nextStep->role)->send(new ApprovalNeeded($model));
+        } else {
+            // Notify completion
+            Mail::to($model->user)->send(new ApprovalCompleted($model));
+        }
+    }
+}
+```
+
+### Approval History
+
+```php
+// Get approval history for a model
+$history = $document->approvalHistory;
+
+foreach ($history as $log) {
+    echo "{$log->user->name} {$log->action} on {$log->created_at}";
+    if ($log->comment) {
+        echo " - Comment: {$log->comment}";
+    }
+}
+```
+
+### Custom Status Transitions
+
+For non-approval related status changes:
+
+```php
+enum DocumentStatuses: string implements ApprovalStatusInterface
+{
+    case DRAFT = 'DRAFT';
+    case ON_HOLD = 'ON_HOLD';
+    case ARCHIVED = 'ARCHIVED';
+    // ... other cases
+
+    public static function getStatusTransitions(): array
+    {
+        return [
+            self::DRAFT->value => self::ON_HOLD->value,
+            self::ON_HOLD->value => self::DRAFT->value,
+            // These transitions don't require permissions
+        ];
+    }
+
+    // ... other methods
+}
+```
+
+## Advanced Configuration
+
+### Custom Approval Log Model
+
+If you want to extend the approval logging functionality:
+
+```php
+<?php
+
+namespace App\Models;
+
+use jodeveloper\ApprovalFlow\Models\ApprovalLog as BaseApprovalLog;
+
+class CustomApprovalLog extends BaseApprovalLog
+{
+    protected $fillable = [
+        ...parent::$fillable,
+        'department',
+        'priority',
+    ];
+
+    // Add custom relationships or methods
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+}
+```
+
+Then update your config:
+
+```php
+// config/approval-flow.php
+return [
+    'models' => [
+        'approval_log' => \App\Models\CustomApprovalLog::class,
+    ],
+    // ...
+];
+```
+
+### Disable Logging
+
+```php
+// In your .env file
+APPROVAL_FLOW_LOG_ENABLED=false
+
+// Or in config/approval-flow.php
+'log_approvals' => false,
 ```
 
 ## Testing
 
 ```bash
 composer test
+```
+
+### Example Test
+
+```php
+<?php
+
+use App\Models\Document;
+use jodeveloper\ApprovalFlow\Events\ModelApproved;
+
+it('can approve a document', function () {
+    Event::fake();
+    
+    $user = User::factory()->create();
+    $this->actingAs($user);
+    
+    // Give user permission
+    Gate::define('documents.manager-approve', fn() => true);
+    
+    $document = Document::factory()->create([
+        'status_id' => Status::where('code', 'MANAGER_REVIEW')->first()->id
+    ]);
+    
+    expect($document->canApprove())->toBeTrue();
+    expect($document->approve('Approved!'))->toBeTrue();
+    
+    Event::assertDispatched(ModelApproved::class);
+    
+    $document->refresh();
+    expect($document->status->code)->toBe('DIRECTOR_REVIEW');
+});
+
+it('cannot approve without permission', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+    
+    // No permission granted
+    Gate::define('documents.manager-approve', fn() => false);
+    
+    $document = Document::factory()->create([
+        'status_id' => Status::where('code', 'MANAGER_REVIEW')->first()->id
+    ]);
+    
+    expect($document->canApprove())->toBeFalse();
+    expect(fn() => $document->approve())->toThrow(ApprovalFlowException::class);
+});
+```
+
+## Package Structure
+
+```
+src/
+├── ApprovalFlowServiceProvider.php
+├── ApprovalFlowManager.php
+├── Commands/
+│   └── MakeApprovalFlowCommand.php
+├── Contracts/
+│   └── ApprovalStatusInterface.php
+├── DataTransferObjects/
+│   └── ApprovalFlowStep.php
+├── Events/
+│   ├── ModelApproved.php
+│   └── ModelRejected.php
+├── Exceptions/
+│   └── ApprovalFlowException.php
+├── Listeners/
+│   └── LogApprovalActivity.php
+├── Models/
+│   └── ApprovalLog.php
+└── Traits/
+    └── HasApprovalFlow.php
 ```
 
 ## Changelog
@@ -85,7 +481,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [Your Name](https://github.com/jodeveloper)
 - [All Contributors](../../contributors)
 
 ## License
