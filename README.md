@@ -481,7 +481,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [Your Name](https://github.com/jodeveloper)
+- [jodeveloper](https://github.com/jodeveloper)
 - [All Contributors](../../contributors)
 
 ## License
