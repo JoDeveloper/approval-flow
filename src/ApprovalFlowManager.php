@@ -9,7 +9,7 @@ class ApprovalFlowManager
     /**
      * Get approval statistics for a model
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param  \Illuminate\Database\Eloquent\Model  $model
      */
     public function getApprovalStats($model): array
     {
@@ -39,7 +39,7 @@ class ApprovalFlowManager
     /**
      * Bulk approve multiple models
      *
-     * @param iterable<\Illuminate\Database\Eloquent\Model> $models
+     * @param  iterable<\Illuminate\Database\Eloquent\Model>  $models
      */
     public function bulkApprove(iterable $models, ?string $comment = null): array
     {
