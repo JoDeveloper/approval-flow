@@ -2,7 +2,7 @@ name: "Update Changelog"
 
 on:
   release:
-    types: [released]
+    types: [published]
 
 permissions:
   contents: write
@@ -21,12 +21,12 @@ jobs:
       - name: Update Changelog
         uses: stefanzweifel/changelog-updater-action@v1
         with:
-          latest-version: ${{ github.event.release.name }}
+          latest-version: ${{ github.event.release.tag_name }}
           release-notes: ${{ github.event.release.body }}
 
       - name: Commit updated CHANGELOG
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
           branch: main
-          commit_message: Update CHANGELOG
+          commit_message: "Update CHANGELOG for ${{ github.event.release.tag_name }}"
           file_pattern: CHANGELOG.md
