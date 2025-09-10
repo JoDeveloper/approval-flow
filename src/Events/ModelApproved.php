@@ -16,6 +16,6 @@ class ModelApproved
         public ?string $comment = null,
         public ?int $userId = null
     ) {
-        $this->userId = $userId ?? auth()->id();
+        $this->userId = $userId ?? (auth()->check() ? auth()->id() : null);
     }
 }

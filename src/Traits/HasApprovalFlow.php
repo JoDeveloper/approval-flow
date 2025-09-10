@@ -12,16 +12,20 @@ trait HasApprovalFlow
     /**
      * Get the next approval status for the current user
      */
-    public static function getNextApprovalStatus($model): int
+    public static function getNextApprovalStatus($model): int|string
     {
         $user = auth()->user();
-        $currentStatus = $model->status->code;
+        $currentStatus = $model->status?->code;
+
+        if (!$currentStatus) {
+            return $currentStatus ?? '';
+        }
 
         $statusEnum = static::getStatusEnum();
         $approvalFlow = $statusEnum::getApprovalFlow();
         $currentFlowStep = $approvalFlow[$currentStatus] ?? null;
 
-        if ($currentFlowStep && $user->can($currentFlowStep->permission, $model)) {
+        if ($currentFlowStep && $user && $user->can($currentFlowStep->permission, $model)) {
             return static::getStatusId($currentFlowStep->next);
         }
 
@@ -33,7 +37,12 @@ trait HasApprovalFlow
      */
     public static function getRejectStatus($model): ?int
     {
-        $currentStatus = $model->status->code;
+        $currentStatus = $model->status?->code;
+
+        if (!$currentStatus) {
+            return null;
+        }
+
         $statusEnum = static::getStatusEnum();
         $rejectionStatuses = $statusEnum::getRejectionStatuses();
 
@@ -53,10 +62,11 @@ trait HasApprovalFlow
             throw ApprovalFlowException::unauthorizedAction('approve', static::class);
         }
 
-        $previousStatus = $this->status->code;
+        $previousStatus = $this->status?->code ?? '';
         $nextStatusId = static::getNextApprovalStatus($this);
+        $currentStatusId = $this->status ? static::getStatusId($this->status->code) : null;
 
-        if ($nextStatusId !== static::getStatusId($this->status->code)) {
+        if ($nextStatusId !== $currentStatusId) {
             $updateData = ['status_id' => $nextStatusId];
 
             if ($comment && $this->hasFillableAttribute('approval_comment')) {
@@ -65,7 +75,8 @@ trait HasApprovalFlow
 
             $this->update($updateData);
 
-            event(new ModelApproved($this, $previousStatus, $this->fresh()->status->code, $comment));
+            $newStatus = $this->fresh()->status?->code ?? '';
+            event(new ModelApproved($this, $previousStatus, $newStatus, $comment));
 
             return true;
         }
@@ -82,7 +93,7 @@ trait HasApprovalFlow
             throw ApprovalFlowException::unauthorizedAction('reject', static::class);
         }
 
-        $previousStatus = $this->status->code;
+        $previousStatus = $this->status?->code ?? '';
         $rejectStatusId = static::getRejectStatus($this);
 
         if ($rejectStatusId) {
@@ -94,7 +105,8 @@ trait HasApprovalFlow
 
             $this->update($updateData);
 
-            event(new ModelRejected($this, $previousStatus, $this->fresh()->status->code, $note));
+            $newStatus = $this->fresh()->status?->code ?? '';
+            event(new ModelRejected($this, $previousStatus, $newStatus, $note));
 
             return true;
         }
@@ -126,7 +138,12 @@ trait HasApprovalFlow
      */
     public function getNextStatusCode(): ?string
     {
-        $currentStatus = $this->status->code;
+        $currentStatus = $this->status?->code;
+
+        if (!$currentStatus) {
+            return null;
+        }
+
         $statusEnum = static::getStatusEnum();
 
         $statusTransitions = $statusEnum::getStatusTransitions() ?? [];
@@ -147,7 +164,12 @@ trait HasApprovalFlow
      */
     public function getCurrentApprovalStep(): ?ApprovalFlowStep
     {
-        $currentStatus = $this->status->code;
+        $currentStatus = $this->status?->code;
+
+        if (!$currentStatus) {
+            return null;
+        }
+
         $statusEnum = static::getStatusEnum();
         $approvalFlow = $statusEnum::getApprovalFlow();
 
@@ -167,8 +189,14 @@ trait HasApprovalFlow
      */
     public function isCompleted(): bool
     {
+        $currentStatus = $this->status?->code;
+
+        if (!$currentStatus) {
+            return false;
+        }
+
         $statusEnum = static::getStatusEnum();
-        return $this->status->code === $statusEnum::getCompletedStatus();
+        return $currentStatus === $statusEnum::getCompletedStatus();
     }
 
     /**
@@ -189,9 +217,23 @@ trait HasApprovalFlow
     /**
      * Get status ID from enum or string
      */
-    public static function getStatusId($status): int
+    public static function getStatusId($status): int|string
     {
-        $code = is_string($status) ? $status : $status->name;
+        if (is_string($status)) {
+            $code = $status;
+        } elseif (is_object($status)) {
+            // Handle different enum types
+            if (method_exists($status, 'value')) {
+                $code = $status->value;
+            } elseif (property_exists($status, 'name')) {
+                $code = $status->name;
+            } else {
+                throw new \InvalidArgumentException('Invalid status type provided');
+            }
+        } else {
+            throw new \InvalidArgumentException('Status must be a string or object');
+        }
+
         return static::statuses($code)->id;
     }
 
@@ -203,13 +245,27 @@ trait HasApprovalFlow
     /**
      * Get statuses - should be implemented by the model or use existing method
      */
-    abstract public static function statuses(string $code);
+    abstract public static function statuses(string $code): object;
 
     /**
      * Check if attribute is fillable
      */
-    protected function hasFillableAttribute(string $attribute): bool
+    public function hasFillableAttribute(string $attribute): bool
     {
-        return in_array($attribute, $this->getFillable());
+        $fillable = $this->getFillable();
+        $guarded = $this->getGuarded();
+
+        // If fillable is not empty, check if attribute is in fillable
+        if (!empty($fillable)) {
+            return in_array($attribute, $fillable);
+        }
+
+        // If fillable is empty, all attributes are fillable unless guarded
+        if (!empty($guarded)) {
+            return !in_array($attribute, $guarded) && !in_array('*', $guarded);
+        }
+
+        // If both fillable and guarded are empty, all attributes are fillable
+        return true;
     }
 }

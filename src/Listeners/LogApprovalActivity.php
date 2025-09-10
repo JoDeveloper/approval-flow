@@ -26,7 +26,7 @@ class LogApprovalActivity
             'metadata' => [
                 'user_agent' => request()?->header('User-Agent'),
                 'ip_address' => request()?->ip(),
-                'timestamp' => now(),
+                'timestamp' => now()->toISOString(),
             ],
         ]);
     }

@@ -20,11 +20,11 @@ class ApprovalFlowManager
         return [
             'total_approvals' => $history->where('action', 'approved')->count(),
             'total_rejections' => $history->where('action', 'rejected')->count(),
-            'current_status' => $model->status->code,
+            'current_status' => $model->status?->code,
             'is_completed' => $model->isCompleted(),
             'can_approve' => $model->canApprove(),
             'can_reject' => $model->canReject(),
-            'next_step' => $model->getCurrentApprovalStep()?->role,
+            'next_step' => $model->getCurrentApprovalStep()?->permission,
         ];
     }
 
