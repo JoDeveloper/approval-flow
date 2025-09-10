@@ -22,8 +22,7 @@ class ApprovalFlowServiceProvider extends PackageServiceProvider
                 $command
                     ->publishConfigFile()
                     ->publishMigrations()
-                    ->copyAndRegisterServiceProviderInApp()
-                    ->askToStarRepoOnGitHub('yourname/laravel-approval-flow');
+                    ->copyAndRegisterServiceProviderInApp();
             });
     }
 
