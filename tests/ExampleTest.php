@@ -1,7 +1,5 @@
 <?php
 
-
-
 use Jodeveloper\ApprovalFlow\Tests\Models\TestModel;
 
 it('can test', function () {
@@ -9,7 +7,7 @@ it('can test', function () {
 });
 
 it('handles null status in getNextApprovalStatus', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->status = null;
 
     $result = TestModel::getNextApprovalStatus($model);
@@ -18,7 +16,7 @@ it('handles null status in getNextApprovalStatus', function () {
 });
 
 it('handles null status in canApprove', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->status = null;
 
     $result = $model->canApprove();
@@ -27,7 +25,7 @@ it('handles null status in canApprove', function () {
 });
 
 it('handles null status in getCurrentApprovalStep', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->status = null;
 
     $result = $model->getCurrentApprovalStep();
@@ -36,7 +34,7 @@ it('handles null status in getCurrentApprovalStep', function () {
 });
 
 it('handles null status in isCompleted', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->status = null;
 
     $result = $model->isCompleted();
@@ -56,7 +54,7 @@ it('throws exception for invalid status type in getStatusId', function () {
 });
 
 it('handles fillable attributes correctly', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->setFillable(['approval_comment']);
 
     $result = $model->hasFillableAttribute('approval_comment');
@@ -67,7 +65,7 @@ it('handles fillable attributes correctly', function () {
 });
 
 it('handles guarded attributes correctly', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->setFillable([]); // Empty fillable
     $model->setGuarded(['id']); // Guarded id
 
@@ -79,7 +77,7 @@ it('handles guarded attributes correctly', function () {
 });
 
 it('handles all guarded correctly', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->setFillable([]);
     $model->setGuarded(['*']); // All guarded
 
@@ -88,10 +86,10 @@ it('handles all guarded correctly', function () {
 });
 
 it('handles approval and rejection with null status', function () {
-    $model = new TestModel();
+    $model = new TestModel;
     $model->status = null;
 
     // Should throw unauthorized exception
-    expect(fn() => $model->approve())->toThrow(\Jodeveloper\ApprovalFlow\Exceptions\ApprovalFlowException::class);
-    expect(fn() => $model->reject())->toThrow(\Jodeveloper\ApprovalFlow\Exceptions\ApprovalFlowException::class);
+    expect(fn () => $model->approve())->toThrow(\Jodeveloper\ApprovalFlow\Exceptions\ApprovalFlowException::class);
+    expect(fn () => $model->reject())->toThrow(\Jodeveloper\ApprovalFlow\Exceptions\ApprovalFlowException::class);
 });
