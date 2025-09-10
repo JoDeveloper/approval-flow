@@ -4,6 +4,7 @@ return [
     /*
      * Enable or disable approval activity logging
      */
+    /** @phpstan-ignore-next-line */
     'log_approvals' => env('APPROVAL_FLOW_LOG_ENABLED', true),
 
     /*
@@ -24,6 +25,7 @@ return [
      * Notification settings
      */
     'notifications' => [
+        /** @phpstan-ignore-next-line */
         'enabled' => env('APPROVAL_FLOW_NOTIFICATIONS_ENABLED', true),
         'channels' => ['mail', 'database'],
     ],

@@ -24,8 +24,8 @@ class LogApprovalActivity
             'new_status' => $event instanceof ModelApproved ? $event->newStatus : $event->rejectedStatus,
             'comment' => $event->comment ?? $event->note ?? null,
             'metadata' => [
-                'user_agent' => request()?->header('User-Agent'),
-                'ip_address' => request()?->ip(),
+                'user_agent' => request()->header('User-Agent'),
+                'ip_address' => request()->ip(),
                 'timestamp' => now()->toISOString(),
             ],
         ]);

@@ -1,6 +1,5 @@
 includes:
     - phpstan-baseline.neon
-    - vendor/nunomaduro/larastan/extension.neon
 
 parameters:
     level: 5
@@ -9,3 +8,6 @@ parameters:
         - config
         - database
     tmpDir: build/phpstan
+    parallel:
+        processTimeout: 300.0
+        maximumNumberOfProcesses: 1

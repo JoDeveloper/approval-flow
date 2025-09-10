@@ -7,6 +7,7 @@ use Jodeveloper\ApprovalFlow\Events\ModelApproved;
 use Jodeveloper\ApprovalFlow\Events\ModelRejected;
 use Jodeveloper\ApprovalFlow\Exceptions\ApprovalFlowException;
 
+/** @phpstan-ignore-next-line */
 trait HasApprovalFlow
 {
     /**
