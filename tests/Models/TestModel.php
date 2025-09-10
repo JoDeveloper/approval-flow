@@ -3,8 +3,8 @@
 namespace Jodeveloper\ApprovalFlow\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Jodeveloper\ApprovalFlow\Traits\HasApprovalFlow;
 use Jodeveloper\ApprovalFlow\Tests\Enums\TestStatus;
+use Jodeveloper\ApprovalFlow\Traits\HasApprovalFlow;
 
 class TestModel extends Model
 {
@@ -30,7 +30,7 @@ class TestModel extends Model
             'REJECTED' => 4,
         ];
 
-        return (object)['id' => $ids[$status->value] ?? 1, 'name' => $status->name];
+        return (object) ['id' => $ids[$status->value] ?? 1, 'name' => $status->name];
     }
 
     public function setFillable(array $fillable)

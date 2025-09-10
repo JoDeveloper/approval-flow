@@ -17,7 +17,7 @@ trait HasApprovalFlow
         $user = auth()->user();
         $currentStatus = $model->status?->code;
 
-        if (!$currentStatus) {
+        if (! $currentStatus) {
             return $currentStatus ?? '';
         }
 
@@ -39,7 +39,7 @@ trait HasApprovalFlow
     {
         $currentStatus = $model->status?->code;
 
-        if (!$currentStatus) {
+        if (! $currentStatus) {
             return null;
         }
 
@@ -140,7 +140,7 @@ trait HasApprovalFlow
     {
         $currentStatus = $this->status?->code;
 
-        if (!$currentStatus) {
+        if (! $currentStatus) {
             return null;
         }
 
@@ -166,7 +166,7 @@ trait HasApprovalFlow
     {
         $currentStatus = $this->status?->code;
 
-        if (!$currentStatus) {
+        if (! $currentStatus) {
             return null;
         }
 
@@ -191,11 +191,12 @@ trait HasApprovalFlow
     {
         $currentStatus = $this->status?->code;
 
-        if (!$currentStatus) {
+        if (! $currentStatus) {
             return false;
         }
 
         $statusEnum = static::getStatusEnum();
+
         return $currentStatus === $statusEnum::getCompletedStatus();
     }
 
@@ -256,13 +257,13 @@ trait HasApprovalFlow
         $guarded = $this->getGuarded();
 
         // If fillable is not empty, check if attribute is in fillable
-        if (!empty($fillable)) {
+        if (! empty($fillable)) {
             return in_array($attribute, $fillable);
         }
 
         // If fillable is empty, all attributes are fillable unless guarded
-        if (!empty($guarded)) {
-            return !in_array($attribute, $guarded) && !in_array('*', $guarded);
+        if (! empty($guarded)) {
+            return ! in_array($attribute, $guarded) && ! in_array('*', $guarded);
         }
 
         // If both fillable and guarded are empty, all attributes are fillable
