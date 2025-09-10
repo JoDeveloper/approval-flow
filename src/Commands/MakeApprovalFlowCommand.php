@@ -15,11 +15,12 @@ class MakeApprovalFlowCommand extends Command
     public function handle(Filesystem $files): int
     {
         $name = $this->argument('name');
-        $enumName = Str::studly($name) . 'Statuses';
+        $enumName = Str::studly($name).'Statuses';
         $path = app_path("Enums/{$enumName}.php");
 
         if ($files->exists($path)) {
             $this->error("Enum {$enumName} already exists!");
+
             return self::FAILURE;
         }
 

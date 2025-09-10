@@ -2,10 +2,10 @@
 
 namespace Jodeveloper\ApprovalFlow;
 
+use Jodeveloper\ApprovalFlow\Commands\MakeApprovalFlowCommand;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Jodeveloper\ApprovalFlow\Commands\MakeApprovalFlowCommand;
 use Jodeveloper\ApprovalFlow\Events;
 use Jodeveloper\ApprovalFlow\Listeners;
 
@@ -32,7 +32,7 @@ class ApprovalFlowServiceProvider extends PackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->bind('approval-flow', function () {
-            return new ApprovalFlowManager();
+            return new ApprovalFlowManager;
         });
     }
 
