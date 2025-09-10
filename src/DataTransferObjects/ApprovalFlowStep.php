@@ -25,14 +25,14 @@ class ApprovalFlowStep
     public function validatePermission($model): void
     {
         // Check if permission is in camelCase
-        if (!preg_match('/^[a-z][a-zA-Z]*$/', $this->permission)) {
+        if (! preg_match('/^[a-z][a-zA-Z]*$/', $this->permission)) {
             throw ApprovalFlowException::invalidPermission($this->permission, 'must be in camelCase');
         }
 
         // Check if permission is a method in the model's policy
         $policy = Gate::getPolicyFor($model);
-        if (!$policy || !method_exists($policy, $this->permission)) {
-            throw ApprovalFlowException::invalidPermission($this->permission, 'not a valid policy method for ' . get_class($model));
+        if (! $policy || ! method_exists($policy, $this->permission)) {
+            throw ApprovalFlowException::invalidPermission($this->permission, 'not a valid policy method for '.get_class($model));
         }
     }
 }
