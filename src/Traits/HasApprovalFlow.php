@@ -172,8 +172,13 @@ trait HasApprovalFlow
 
         $statusEnum = static::getStatusEnum();
         $approvalFlow = $statusEnum::getApprovalFlow();
+        $step = $approvalFlow[$currentStatus] ?? null;
 
-        return $approvalFlow[$currentStatus] ?? null;
+        if ($step) {
+            $step->validatePermission($this);
+        }
+
+        return $step;
     }
 
     /**

@@ -57,11 +57,11 @@ enum {{enumName}}: string implements ApprovalStatusInterface
     {
         return [
             self::DRAFT->value => new ApprovalFlowStep(
-                permission: 'approve.permission',
+                permission: 'approve',
                 next: self::PENDING_APPROVAL->value,
             ),
             self::PENDING_APPROVAL->value => new ApprovalFlowStep(
-                permission: 'approve.permission',
+                permission: 'approve',
                 next: self::APPROVED->value,
             ),
         ];

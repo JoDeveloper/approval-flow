@@ -16,11 +16,11 @@ enum TestStatus: string implements ApprovalStatusInterface
     {
         return [
             self::DRAFT->value => new ApprovalFlowStep(
-                permission: 'approve.draft',
+                permission: 'approveDraft',
                 next: self::PENDING->value,
             ),
             self::PENDING->value => new ApprovalFlowStep(
-                permission: 'approve.pending',
+                permission: 'approvePending',
                 next: self::APPROVED->value,
             ),
         ];

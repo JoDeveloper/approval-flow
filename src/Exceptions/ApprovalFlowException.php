@@ -25,4 +25,9 @@ class ApprovalFlowException extends Exception
     {
         return new self("Model {$model} must implement getStatusEnum() method");
     }
+
+    public static function invalidPermission(string $permission, string $reason): self
+    {
+        return new self("Invalid permission '{$permission}': {$reason}");
+    }
 }

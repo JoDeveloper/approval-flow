@@ -71,15 +71,15 @@ enum DocumentStatuses: string implements ApprovalStatusInterface
     {
         return [
             self::DRAFT->value => new ApprovalFlowStep(
-                permission: 'documents.manager-approve',
+                permission: 'managerApprove',
                 next: self::MANAGER_REVIEW->value,
             ),
             self::MANAGER_REVIEW->value => new ApprovalFlowStep(
-                permission: 'documents.manager-approve',
+                permission: 'managerApprove',
                 next: self::DIRECTOR_REVIEW->value,
             ),
             self::DIRECTOR_REVIEW->value => new ApprovalFlowStep(
-                permission: 'documents.director-approve',
+                permission: 'directorApprove',
                 next: self::APPROVED->value,
             ),
         ];
