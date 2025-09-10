@@ -241,7 +241,7 @@ trait HasApprovalFlow
             throw new \InvalidArgumentException('Status must be a string or object');
         }
 
-        return static::statuses($code)->id;
+        return static::getStatus($code)->id;
     }
 
     /**
@@ -250,9 +250,9 @@ trait HasApprovalFlow
     abstract public static function getStatusEnum(): string;
 
     /**
-     * Get statuses - should be implemented by the model or use existing method
+     * Get status by code - should be implemented by the model
      */
-    abstract public static function statuses(string $code): object;
+    abstract public static function getStatus(string $code): object;
 
     /**
      * Check if attribute is fillable

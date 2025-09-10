@@ -137,7 +137,7 @@ class Document extends Model
         return DocumentStatuses::class;
     }
 
-    public static function statuses(string $code)
+    public static function getStatus(string $code)
     {
         return Status::where('code', $code)->first();
     }

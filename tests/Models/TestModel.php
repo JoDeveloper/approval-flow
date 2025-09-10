@@ -19,7 +19,7 @@ class TestModel extends Model
         return TestStatus::class;
     }
 
-    public static function statuses(string $code): object
+    public static function getStatus(string $code): object
     {
         $status = TestStatus::tryFrom($code) ?? TestStatus::DRAFT;
 
