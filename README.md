@@ -423,51 +423,6 @@ APPROVAL_FLOW_LOG_ENABLED=false
 composer test
 ```
 
-### Example Test
-
-```php
-<?php
-
-use App\Models\Document;
-use jodeveloper\ApprovalFlow\Events\ModelApproved;
-
-it('can approve a document', function () {
-    Event::fake();
-    
-    $user = User::factory()->create();
-    $this->actingAs($user);
-    
-    // Give user permission
-    Gate::define('documents.manager-approve', fn() => true);
-    
-    $document = Document::factory()->create([
-        'status_id' => Status::where('code', 'MANAGER_REVIEW')->first()->id
-    ]);
-    
-    expect($document->canApprove())->toBeTrue();
-    expect($document->approve('Approved!'))->toBeTrue();
-    
-    Event::assertDispatched(ModelApproved::class);
-    
-    $document->refresh();
-    expect($document->status->code)->toBe('DIRECTOR_REVIEW');
-});
-
-it('cannot approve without permission', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user);
-    
-    // No permission granted
-    Gate::define('documents.manager-approve', fn() => false);
-    
-    $document = Document::factory()->create([
-        'status_id' => Status::where('code', 'MANAGER_REVIEW')->first()->id
-    ]);
-    
-    expect($document->canApprove())->toBeFalse();
-    expect(fn() => $document->approve())->toThrow(ApprovalFlowException::class);
-});
-```
 
 ## Package Structure
 
