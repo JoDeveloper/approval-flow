@@ -98,9 +98,18 @@ enum DocumentStatuses: string implements ApprovalStatusInterface
         return self::APPROVED->value;
     }
 
+    /**
+     * Define simple status transitions that bypass the approval workflow.
+     * Use this for automatic transitions that don't require permissions.
+     *
+     * @return array<string, string> Maps current status to next status
+     */
     public static function getStatusTransitions(): array
     {
-        return [];
+        return [
+            // Example: 'AUTO_APPROVED' => 'COMPLETED',
+            // Example: 'EXPIRED' => 'CANCELLED',
+        ];
     }
 }
 ```
@@ -316,7 +325,7 @@ foreach ($history as $log) {
 
 ### Custom Status Transitions
 
-For non-approval related status changes:
+For **simple status changes** that don't require approval workflow:
 
 ```php
 enum DocumentStatuses: string implements ApprovalStatusInterface
@@ -324,20 +333,38 @@ enum DocumentStatuses: string implements ApprovalStatusInterface
     case DRAFT = 'DRAFT';
     case ON_HOLD = 'ON_HOLD';
     case ARCHIVED = 'ARCHIVED';
+    case AUTO_APPROVED = 'AUTO_APPROVED';
+    case EXPIRED = 'EXPIRED';
     // ... other cases
 
     public static function getStatusTransitions(): array
     {
         return [
-            self::DRAFT->value => self::ON_HOLD->value,
-            self::ON_HOLD->value => self::DRAFT->value,
-            // These transitions don't require permissions
+            // Simple transitions without permissions
+            self::DRAFT->name => self::ON_HOLD->name,
+            self::ON_HOLD->name => self::DRAFT->name,
+
+            // Automatic system transitions
+            self::AUTO_APPROVED->name => self::APPROVED->name,
+            self::EXPIRED->name => self::ARCHIVED->name,
         ];
     }
 
     // ... other methods
 }
 ```
+
+**When to use `getStatusTransitions()`:**
+- ✅ **Automatic transitions** (system-triggered)
+- ✅ **Simple state changes** (no approval needed)
+- ✅ **Performance optimization** (bypass permission checks)
+- ✅ **Fallback transitions** (when approval flow not applicable)
+
+**When to use `getApprovalFlow()`:**
+- ❌ **Permission-based approvals**
+- ❌ **Multi-step workflows**
+- ❌ **User-triggered transitions**
+- ❌ **Audit trails required**
 
 ## Advanced Configuration
 
