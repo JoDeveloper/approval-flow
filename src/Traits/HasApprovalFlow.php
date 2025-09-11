@@ -249,10 +249,10 @@ trait HasApprovalFlow
             $code = $status;
         } elseif (is_object($status)) {
             // Handle different enum types
-            if (method_exists($status, 'value')) {
-                $code = $status->value;
-            } elseif (property_exists($status, 'name')) {
+            if (property_exists($status, 'name')) {
                 $code = $status->name;
+            } elseif (method_exists($status, 'value')) {
+                $code = $status->value;
             } else {
                 throw new \InvalidArgumentException('Invalid status type provided');
             }

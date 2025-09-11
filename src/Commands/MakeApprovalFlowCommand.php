@@ -56,13 +56,13 @@ enum {{enumName}}: string implements ApprovalStatusInterface
     public static function getApprovalFlow(): array
     {
         return [
-            self::DRAFT->value => new ApprovalFlowStep(
+            self::DRAFT->name => new ApprovalFlowStep(
                 permission: null, // No permission required
-                next: self::PENDING_APPROVAL->value,
+                next: self::PENDING_APPROVAL->name,
             ),
-            self::PENDING_APPROVAL->value => new ApprovalFlowStep(
+            self::PENDING_APPROVAL->name => new ApprovalFlowStep(
                 permission: 'approve',
-                next: self::APPROVED->value,
+                next: self::APPROVED->name,
             ),
         ];
     }
@@ -70,13 +70,13 @@ enum {{enumName}}: string implements ApprovalStatusInterface
     public static function getRejectionStatuses(): array
     {
         return [
-            self::PENDING_APPROVAL->value => self::REJECTED->value,
+            self::PENDING_APPROVAL->name => self::REJECTED->name,
         ];
     }
 
     public static function getCompletedStatus(): string
     {
-        return self::APPROVED->value;
+        return self::APPROVED->name;
     }
 
     public static function getStatusTransitions(): array

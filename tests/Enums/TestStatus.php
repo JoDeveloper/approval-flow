@@ -15,13 +15,13 @@ enum TestStatus: string implements ApprovalStatusInterface
     public static function getApprovalFlow(): array
     {
         return [
-            self::DRAFT->value => new ApprovalFlowStep(
+            self::DRAFT->name => new ApprovalFlowStep(
                 permission: null, // No permission required for draft
-                next: self::PENDING->value,
+                next: self::PENDING->name,
             ),
-            self::PENDING->value => new ApprovalFlowStep(
+            self::PENDING->name => new ApprovalFlowStep(
                 permission: 'approvePending',
-                next: self::APPROVED->value,
+                next: self::APPROVED->name,
             ),
         ];
     }

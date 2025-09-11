@@ -70,17 +70,17 @@ enum DocumentStatuses: string implements ApprovalStatusInterface
     public static function getApprovalFlow(): array
     {
         return [
-            self::DRAFT->value => new ApprovalFlowStep(
+            self::DRAFT->name => new ApprovalFlowStep(
                 permission: null, // No permission required for initial submission
-                next: self::MANAGER_REVIEW->value,
+                next: self::MANAGER_REVIEW->name,
             ),
-            self::MANAGER_REVIEW->value => new ApprovalFlowStep(
+            self::MANAGER_REVIEW->name => new ApprovalFlowStep(
                 permission: 'managerApprove',
-                next: self::DIRECTOR_REVIEW->value,
+                next: self::DIRECTOR_REVIEW->name,
             ),
-            self::DIRECTOR_REVIEW->value => new ApprovalFlowStep(
+            self::DIRECTOR_REVIEW->name => new ApprovalFlowStep(
                 permission: 'directorApprove',
-                next: self::APPROVED->value,
+                next: self::APPROVED->name,
             ),
         ];
     }
