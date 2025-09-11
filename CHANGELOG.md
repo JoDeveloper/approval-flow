@@ -2,6 +2,10 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## 1.0.9 - 2025-09-11
+
+**Full Changelog**: https://github.com/JoDeveloper/nakhlah-approval-flow/compare/1.0.8...1.0.9
+
 ## 1.0.8 - 2025-09-11
 
 **Full Changelog**: https://github.com/JoDeveloper/nakhlah-approval-flow/compare/1.0.7...1.0.8
