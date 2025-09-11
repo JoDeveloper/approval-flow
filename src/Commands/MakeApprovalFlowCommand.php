@@ -39,53 +39,53 @@ class MakeApprovalFlowCommand extends Command
     protected function getStub(): string
     {
         return <<<'EOT'
-<?php
+            <?php
 
-namespace {{namespace}};
+            namespace {{namespace}};
 
-use Jodeveloper\ApprovalFlow\Contracts\ApprovalStatusInterface;
-use Jodeveloper\ApprovalFlow\DataTransferObjects\ApprovalFlowStep;
+            use Jodeveloper\ApprovalFlow\Contracts\ApprovalStatusInterface;
+            use Jodeveloper\ApprovalFlow\DataTransferObjects\ApprovalFlowStep;
 
-enum {{enumName}}: string implements ApprovalStatusInterface
-{
-    case DRAFT = 'DRAFT';
-    case PENDING_APPROVAL = 'PENDING_APPROVAL';
-    case APPROVED = 'APPROVED';
-    case REJECTED = 'REJECTED';
+            enum {{enumName}}: string implements ApprovalStatusInterface
+            {
+                case DRAFT = 'DRAFT';
+                case PENDING_APPROVAL = 'PENDING_APPROVAL';
+                case APPROVED = 'APPROVED';
+                case REJECTED = 'REJECTED';
 
-    public static function getApprovalFlow(): array
-    {
-        return [
-            self::DRAFT->name => new ApprovalFlowStep(
-                permission: null, // No permission required
-                next: self::PENDING_APPROVAL->name,
-            ),
-            self::PENDING_APPROVAL->name => new ApprovalFlowStep(
-                permission: 'approve',
-                next: self::APPROVED->name,
-            ),
-        ];
-    }
+                public static function getApprovalFlow(): array
+                {
+                    return [
+                        self::DRAFT->name => new ApprovalFlowStep(
+                            permission: null, // No permission required
+                            next: self::PENDING_APPROVAL->name,
+                        ),
+                        self::PENDING_APPROVAL->name => new ApprovalFlowStep(
+                            permission: 'approve',
+                            next: self::APPROVED->name,
+                        ),
+                    ];
+                }
 
-    public static function getRejectionStatuses(): array
-    {
-        return [
-            self::PENDING_APPROVAL->name => self::REJECTED->name,
-        ];
-    }
+                public static function getRejectionStatuses(): array
+                {
+                    return [
+                        self::PENDING_APPROVAL->name => self::REJECTED->name,
+                    ];
+                }
 
-    public static function getCompletedStatus(): string
-    {
-        return self::APPROVED->name;
-    }
+                public static function getCompletedStatus(): string
+                {
+                    return self::APPROVED->name;
+                }
 
-    public static function getStatusTransitions(): array
-    {
-        return [
-            // Add custom transitions here if needed
-        ];
-    }
-}
-EOT;
+                public static function getStatusTransitions(): array
+                {
+                    return [
+                        // Add custom transitions here if needed
+                    ];
+                }
+            }
+            EOT;
     }
 }
