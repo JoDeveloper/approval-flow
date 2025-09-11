@@ -71,7 +71,7 @@ enum DocumentStatuses: string implements ApprovalStatusInterface
     {
         return [
             self::DRAFT->value => new ApprovalFlowStep(
-                permission: 'managerApprove',
+                permission: null, // No permission required for initial submission
                 next: self::MANAGER_REVIEW->value,
             ),
             self::MANAGER_REVIEW->value => new ApprovalFlowStep(

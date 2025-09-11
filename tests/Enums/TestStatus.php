@@ -16,7 +16,7 @@ enum TestStatus: string implements ApprovalStatusInterface
     {
         return [
             self::DRAFT->value => new ApprovalFlowStep(
-                permission: 'approveDraft',
+                permission: null, // No permission required for draft
                 next: self::PENDING->value,
             ),
             self::PENDING->value => new ApprovalFlowStep(

@@ -26,8 +26,16 @@ trait HasApprovalFlow
         $approvalFlow = $statusEnum::getApprovalFlow();
         $currentFlowStep = $approvalFlow[$currentStatus] ?? null;
 
-        if ($currentFlowStep && $user && $user->can($currentFlowStep->permission, $model)) {
-            return static::getStatusId($currentFlowStep->next);
+        if ($currentFlowStep) {
+            // If no permission is required, allow transition
+            if ($currentFlowStep->permission === null) {
+                return static::getStatusId($currentFlowStep->next);
+            }
+
+            // Check if user has the required permission
+            if ($user && $user->can($currentFlowStep->permission, $model)) {
+                return static::getStatusId($currentFlowStep->next);
+            }
         }
 
         return static::getStatusId($currentStatus);
@@ -123,7 +131,18 @@ trait HasApprovalFlow
         $user = auth()->user();
         $currentFlowStep = $this->getCurrentApprovalStep();
 
-        return $currentFlowStep && $user && $user->can($currentFlowStep->permission, $this);
+        // If no step is found, cannot approve
+        if (! $currentFlowStep) {
+            return false;
+        }
+
+        // If no permission is required, anyone can approve
+        if ($currentFlowStep->permission === null) {
+            return true;
+        }
+
+        // Check if user has the required permission
+        return $user && $user->can($currentFlowStep->permission, $this);
     }
 
     /**

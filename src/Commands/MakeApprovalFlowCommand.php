@@ -57,7 +57,7 @@ enum {{enumName}}: string implements ApprovalStatusInterface
     {
         return [
             self::DRAFT->value => new ApprovalFlowStep(
-                permission: 'approve',
+                permission: null, // No permission required
                 next: self::PENDING_APPROVAL->value,
             ),
             self::PENDING_APPROVAL->value => new ApprovalFlowStep(
