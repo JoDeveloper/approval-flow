@@ -2,6 +2,10 @@
 
 All notable changes to `:package_name` will be documented in this file.
 
+## 1.1.1 - 2025-09-17
+
+**Full Changelog**: https://github.com/JoDeveloper/approval-flow/compare/1.1.0...1.1.1
+
 ## 1.1.0 - 2025-09-11
 
 **Full Changelog**: https://github.com/JoDeveloper/approval-flow/compare/1.0.9...1.1.0
