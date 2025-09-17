@@ -1,5 +1,5 @@
 {
-    "name": "jodeveloper/nakhlah-approval-flow",
+    "name": "jodeveloper/approval-flow",
     "description": "A Laravel package for managing approval workflows with enums and traits",
     "keywords": [
         "laravel",
@@ -8,7 +8,7 @@
         "enum",
         "trait"
     ],
-    "homepage": "https://github.com/jodeveloper/nakhlah-approval-flow",
+    "homepage": "https://github.com/jodeveloper/approval-flow",
     "license": "MIT",
     "authors": [
         {

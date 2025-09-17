@@ -12,7 +12,7 @@ class ApprovalFlowServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('nakhlah-approval-flow')
+            ->name('approval-flow')
             ->hasConfigFile()
             ->hasMigrations([
                 'create_approval_logs_table',

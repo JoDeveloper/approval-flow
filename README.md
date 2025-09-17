@@ -1,9 +1,9 @@
 # Nakhlah Approval Flow
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/jodeveloper/nakhlah-approval-flow.svg?style=flat-square)](https://packagist.org/packages/jodeveloper/nakhlah-approval-flow)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jodeveloper/nakhlah-approval-flow/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jodeveloper/nakhlah-approval-flow/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jodeveloper/nakhlah-approval-flow/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/jodeveloper/nakhlah-approval-flow/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/jodeveloper/nakhlah-approval-flow.svg?style=flat-square)](https://packagist.org/packages/jodeveloper/nakhlah-approval-flow)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/jodeveloper/approval-flow.svg?style=flat-square)](https://packagist.org/packages/jodeveloper/approval-flow)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/jodeveloper/approval-flow/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/jodeveloper/approval-flow/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/jodeveloper/approval-flow/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/jodeveloper/approval-flow/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/jodeveloper/approval-flow.svg?style=flat-square)](https://packagist.org/packages/jodeveloper/approval-flow)
 
 A powerful Laravel package for managing approval workflows using PHP 8.1+ enums and traits. Create complex approval processes with ease!
 
@@ -23,20 +23,20 @@ A powerful Laravel package for managing approval workflows using PHP 8.1+ enums 
 You can install the package via composer:
 
 ```bash
-composer require jodeveloper/nakhlah-approval-flow
+composer require jodeveloper/approval-flow
 ```
 
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag="nakhlah-approval-flow-migrations"
+php artisan vendor:publish --tag="approval-flow-migrations"
 php artisan migrate
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="nakhlah-approval-flow-config"
+php artisan vendor:publish --tag="approval-flow-config"
 ```
 
 ## Quick Start
